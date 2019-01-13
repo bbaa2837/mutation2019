@@ -106,19 +106,19 @@ def writeResult(suite_result, suite, suite_time, result_writer) :
 	mutation_score = []
 	
      # for each operator(kill, total, mutationscore)
-	for n in list(suite_result.values()):
+	for n in list(suite_result.values()) :
         
-        ms = [n[0],n[1]]
 		killnum_per_op += n[0]
-        totalnum_per_op += n[1]
+		totalnum_per_op += n[1]
+		ms = [n[0],n[1]]
 
-        try:
+		try:
 			ms.append(n[0]/n[1])
             
 		except ZeroDivisionError:
 			ms.append(0)
 
-        mutation_score.append(ms)
+		mutation_score.append(ms)
 
 	result = [suite , suite_time, killnum_per_op, totalnum_per_op]
 	for s in mutation_score:
