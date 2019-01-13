@@ -81,7 +81,7 @@ for i, suite_index in enumerate(suitelist) :
 			d = difflib.unified_diff(o.splitlines(True), p.splitlines(True), lineterm = '\n')
 			d = ".".join(d)
 
-			if (difference != d) : 
+			if (difference != d && int(m_index)>0) : 
 				print("diff : MUT{} by {}".format(m_index, op))
 				diff_op.add(op)
 
@@ -157,7 +157,7 @@ for i, suite_index in enumerate(suitelist) :
 			d = difflib.unified_diff(o.splitlines(True), p.splitlines(True), lineterm = '\n')
 			d = ".".join(d)
 
-			if (difference != d) : 
+			if (difference != d && int(m_index)>0 ) : 
 				print("diff : MUT{} by {}".format(m_index, op))
 				diff_op.add(op)
 
