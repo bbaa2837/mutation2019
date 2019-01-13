@@ -92,6 +92,7 @@ for i, suite_index in enumerate(suitelist) :
 					p2 = open('../mutant.music.perf/source/{}/space.perf.MUT{}.c'.format(op, m_index +1 ), 'r', encoding="ISO-8859-1").read()
 					d2 = ".".join(difflib.unified_diff(o.splitlines(True), p2.splitlines(True), lineterm = '\n'))
 				except FileNotFoundError:
+					pass
 
 				if(d1 == difference) :
 					m_index = m_index - 1
@@ -167,6 +168,7 @@ for i, suite_index in enumerate(suitelist) :
 					o2 = open('../mutant.music.origin/source/{}/space.MUT{}.c'.format(op, m_index +1 ), 'r', encoding="ISO-8859-1").read()
 					d2 = ".".join(difflib.unified_diff(o.splitlines(True), p2.splitlines(True), lineterm = '\n'))
 				except FileNotFoundError:
+					pass
 
 				if(d1 == difference) :
 					m_index = m_index - 1

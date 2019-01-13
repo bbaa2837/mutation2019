@@ -105,7 +105,8 @@ def writeResult(suite_result, suite, suite_time, result_writer) :
     
 	mutation_score = []
 	
-	for n in list(suite_result.values()): # for each operator(kill, total, mutationscore)
+     # for each operator(kill, total, mutationscore)
+	for n in list(suite_result.values()):
         
         ms = [n[0],n[1]]
 		killnum_per_op += n[0]
