@@ -4,6 +4,7 @@ import subprocess
 import numpy as np
 import filecmp
 import csv
+import time
 
 def createDirSH(path) :
     if os.path.exists(os.path.abspath(path)):
@@ -43,17 +44,18 @@ def exe(target, suite, op, mutant) :
     result =[0,0,0,0,0,0] # result per MUT
     
     suitefile = open("../testplans.alt/testplans.cov/" + suite, 'r')
-    suite_result = open("../suiteResult.csv", 'a', newline = '')
+    suite_result = open("../result/suiteResult.csv", 'a', newline = '')
     csv_writer = csv.writer(suite_result)
 
     CORRECT_OUTPUT_DIR = "../outputs.{}/".format(target) + suite
     MUSIC_OUTPUT_DIR = "../outputs.{}.music/".format(target) + suite
     
-    r = []
+    r = [suite, op]
 
     for test_index, line in enumerate(suitefile.readlines()) :
 
         space_result_file = CORRECT_OUTPUT_DIR + "/test_{}".format(test_index)
+        r.append("test_{}".format(test_index))
         mutant_result_file = "output_file2"
         # mutant_result_file = MUSIC_OUTPUT_DIR + "/test_{}".format(test_index)
 
@@ -62,6 +64,7 @@ def exe(target, suite, op, mutant) :
             exe_file = mutant.rstrip()
             cmd = "{} {}".format("../mutant.music.{}/exe/".format(target) + op + "/" + exe_file, line.strip())
             
+            start_time = time.time()
             try:
                 with open(mutant_result_file, 'wb') as out_stream:
                     process = subprocess.call(cmd.split(), stdout = out_stream, stderr = subprocess.STDOUT, timeout = 3)
@@ -85,7 +88,7 @@ def exe(target, suite, op, mutant) :
                 result[2] += 1
                 result[5] =1
                 pass
-                
+            exec_time = time.time()-start_time
             # if os.path.isfile(mutant_result_file):
             #     subprocess.call("rm {}".format(mutant_result_file).split(), stderr = subprocess.STDOUT)
     
@@ -93,20 +96,28 @@ def exe(target, suite, op, mutant) :
     if(sum(result[1:5]) > 0) :
         result[5] = 1
     
-    return result
+    return result, exec_time
 
 def writeResult(suite_result, suite, suite_time, result_writer) :
 
-	killnum_per_op = sum(list(n[0] for n in list(suite_result.values())))
-	totalnum_per_op = sum([n[1] for n in list(suite_result.values())])
+	# killnum_per_op = sum(list(n[0] for n in list(suite_result.values())))
+	# totalnum_per_op = sum([n[1] for n in list(suite_result.values())])
     
 	mutation_score = []
 	
-	for n in list(suite_result.values()):
-		try:
-			mutation_score.append(n[0]/n[1])
+	for n in list(suite_result.values()): # for each operator(kill, total, mutationscore)
+        
+        ms = [n[0],n[1]]
+		killnum_per_op += n[0]
+        totalnum_per_op += n[1]
+
+        try:
+			ms.append(n[0]/n[1])
+            
 		except ZeroDivisionError:
-			mutation_score.append(0)
+			ms.append(0)
+
+        mutation_score.append(ms)
 
 	result = [suite , suite_time, killnum_per_op, totalnum_per_op]
 	for s in mutation_score:

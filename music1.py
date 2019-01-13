@@ -23,7 +23,6 @@ OUTPUT_PERF_MUSIC_DIR = SPACE_DIR + "outputs.perf.music/"
 reader = csv.reader(open("../testNum.csv", "r"), delimiter = ",")
 suitelist = list(reader)[0]
 
-
 # suitelist = [f for f in listdir(SUITE_DIR) if isfile(join(SUITE_DIR, f))]
 
 operators = [op for op in listdir(EXE_ORIGIN_MUTANT_DIR) if isdir(join(EXE_ORIGIN_MUTANT_DIR,op))]
@@ -34,8 +33,8 @@ perf = open('space.perf.c', 'r', encoding="ISO-8859-1").read()
 difference = difflib.unified_diff(origin.splitlines(True), perf.splitlines(True), lineterm = '\n')
 difference = ".".join(difference)
 
-origin_result_writer = open("../mutationScore_origin3.csv", 'w', newline = '')
-perf_result_writer = open("../mutationScore_perf3.csv", 'w', newline = '')
+origin_result_writer = open("../result/mutationScore_origin3.csv", 'w', newline = '')
+perf_result_writer = open("../result/mutationScore_perf3.csv", 'w', newline = '')
 
 #util.createDirPY(OUTPUT_ORIGIN_MUSIC_DIR)
 #util.createDirPY(OUTPUT_PERF_MUSIC_DIR)
@@ -57,9 +56,6 @@ for i, suite_index in enumerate(suitelist) :
 
 	OUTPUT_ORIGIN_SUITE_DIR = OUTPUT_ORIGIN_MUSIC_DIR + suite
 	OUTPUT_PERF_SUITE_DIR = OUTPUT_PERF_MUSIC_DIR + suite
-	
-	# util.createDirPY(OUTPUT_ORIGIN_SUITE_DIR)
-	# util.createDirPY(OUTPUT_PERF_SUITE_DIR)
 			
 	for op in operators:
 		
@@ -74,9 +70,11 @@ for i, suite_index in enumerate(suitelist) :
 
 		for mutantIndex, mutant in enumerate(origin_mutantlist) :
 			
-			o = open('../mutant.music.origin/source/{}/space.MUT{}.c'.format(op, util1.getIndex(mutant) ), 'r', encoding="ISO-8859-1").read()
+			m_index = util1.getIndex(mutant)
+
+			o = open('../mutant.music.origin/source/{}/space.MUT{}.c'.format(op, m_index ), 'r', encoding="ISO-8859-1").read()
 			try:
-				p = open('../mutant.music.perf/source/{}/space.perf.MUT{}.c'.format(op, util1.getIndex(mutant) ), 'r', encoding="ISO-8859-1").read()
+				p = open('../mutant.music.perf/source/{}/space.perf.MUT{}.c'.format(op, m_index ), 'r', encoding="ISO-8859-1").read()
 			except FileNotFoundError:
 				continue
 
@@ -84,24 +82,36 @@ for i, suite_index in enumerate(suitelist) :
 			d = ".".join(d)
 
 			if (difference != d) : 
-				print("diff : MUT{} by {}".format(util1.getIndex(mutant), op))
+				print("diff : MUT{} by {}".format(m_index, op))
 				diff_op.add(op)
-				continue
 
-			origin_mpath = OUTPUT_ORIGIN_SUITE_DIR + "/" + op + "/MUT" + util1.getIndex(mutant)
+				p1 = open('../mutant.music.perf/source/{}/space.perf.MUT{}.c'.format(op, m_index -1 ), 'r', encoding="ISO-8859-1").read()
+				d1 = ".".join(difflib.unified_diff(o.splitlines(True), p1.splitlines(True), lineterm = '\n'))
+
+				try:
+					p2 = open('../mutant.music.perf/source/{}/space.perf.MUT{}.c'.format(op, m_index +1 ), 'r', encoding="ISO-8859-1").read()
+					d2 = ".".join(difflib.unified_diff(o.splitlines(True), p2.splitlines(True), lineterm = '\n'))
+				except FileNotFoundError:
+
+				if(d1 == difference) :
+					m_index = m_index - 1
+				elif(d2 == difference) : 
+					m_index = m_index + 1
+				else : continue
+
+			origin_mpath = OUTPUT_ORIGIN_SUITE_DIR + "/" + op + "/MUT" + m_index
 			# perf_mpath = OUTPUT_PERF_SUITE_DIR + "/" + op + "/MUT" + util.getIndex(mutant)
 
 			# util.createDirPY(origin_mpath)
 			# # util.createDirPY(perf_mpath)
 			
-			mutant_time = time.time()
-			mutant_result = util1.exe("origin", suite, op, mutant)
-			op_time += time.time() - mutant_time
+			mutant_result, mutant_time = util1.exe("origin", suite, op, mutant)
+			op_time += mutant_time
 			#print(op_time)
 			op_result.append(mutant_result)
 			
-			if mutantIndex == 19 : 
-				break
+			# if mutantIndex == 19 : 
+			# 	break
 
 		suite_time += op_time
 		#print(suite_time)	
@@ -134,10 +144,12 @@ for i, suite_index in enumerate(suitelist) :
 		perf_mutantlist = sorted([m for m in listdir(EXE_PERF_MUTANT_DIR + op) if isfile(join(EXE_PERF_MUTANT_DIR + op, m))])
 
 		for mutantIndex, mutant in enumerate(perf_mutantlist) :
-			
-			p = open('../mutant.music.perf/source/{}/space.perf.MUT{}.c'.format(op, util1.getIndex(mutant) ), 'r', encoding="ISO-8859-1").read()
+
+			m_index = util1.getIndex(mutant)
+
+			p = open('../mutant.music.perf/source/{}/space.perf.MUT{}.c'.format(op, m_index ), 'r', encoding="ISO-8859-1").read()
 			try:
-				o = open('../mutant.music.origin/source/{}/space.MUT{}.c'.format(op, util1.getIndex(mutant) ), 'r', encoding="ISO-8859-1").read()
+				o = open('../mutant.music.origin/source/{}/space.MUT{}.c'.format(op, m_index ), 'r', encoding="ISO-8859-1").read()
 			except FileNotFoundError:
 				continue
 
@@ -145,12 +157,25 @@ for i, suite_index in enumerate(suitelist) :
 			d = ".".join(d)
 
 			if (difference != d) : 
-				print("diff : MUT{} by {}".format(util1.getIndex(mutant), op))
+				print("diff : MUT{} by {}".format(m_index, op))
 				diff_op.add(op)
-				continue	
+
+				o1 = open('../mutant.music.origin/source/{}/space.MUT{}.c'.format(op, m_index -1 ), 'r', encoding="ISO-8859-1").read()
+				d1 = ".".join(difflib.unified_diff(o.splitlines(True), p1.splitlines(True), lineterm = '\n'))
+
+				try:
+					o2 = open('../mutant.music.origin/source/{}/space.MUT{}.c'.format(op, m_index +1 ), 'r', encoding="ISO-8859-1").read()
+					d2 = ".".join(difflib.unified_diff(o.splitlines(True), p2.splitlines(True), lineterm = '\n'))
+				except FileNotFoundError:
+
+				if(d1 == difference) :
+					m_index = m_index - 1
+				elif(d2 == difference) : 
+					m_index = m_index + 1
+				else : continue
 
 			# origin_mpath = OUTPUT_ORIGIN_SUITE_DIR + "/" + op + "/MUT" + util.getIndex(mutant)
-			perf_mpath = OUTPUT_PERF_SUITE_DIR + "/" + op + "/MUT" + util1.getIndex(mutant)
+			perf_mpath = OUTPUT_PERF_SUITE_DIR + "/" + op + "/MUT" + m_index
 
 			# util.createDirPY(origin_mpath)
 			# util.createDirPY(perf_mpath)
@@ -160,8 +185,8 @@ for i, suite_index in enumerate(suitelist) :
 			op_time += time.time() - mutant_time
 			op_result.append(mutant_result)
 
-			if mutantIndex == 19 : 
-				break
+			# if mutantIndex == 19 : 
+			# 	break
 		
 		suite_time += op_time
 
