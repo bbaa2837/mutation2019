@@ -88,21 +88,21 @@ for i, suite_index in enumerate(suitelist) :
 				d2 = ""
 				
 				try:
-					p1 = open('../mutant.music.perf/source/{}/space.perf.MUT{}.c'.format(op, m_index -1 ), 'r', encoding="ISO-8859-1").read()
+					p1 = open('../mutant.music.perf/source/{}/space.perf.MUT{}.c'.format(op, int(m_index) -1 ), 'r', encoding="ISO-8859-1").read()
 					d1 = ".".join(difflib.unified_diff(o.splitlines(True), p1.splitlines(True), lineterm = '\n'))
 				except FileNotFoundError:
 					pass
 
 				try:
-					p2 = open('../mutant.music.perf/source/{}/space.perf.MUT{}.c'.format(op, m_index +1 ), 'r', encoding="ISO-8859-1").read()
+					p2 = open('../mutant.music.perf/source/{}/space.perf.MUT{}.c'.format(op, int(m_index) +1 ), 'r', encoding="ISO-8859-1").read()
 					d2 = ".".join(difflib.unified_diff(o.splitlines(True), p2.splitlines(True), lineterm = '\n'))
 				except FileNotFoundError:
 					pass
 
 				if(d1 == difference) :
-					m_index = m_index - 1
+					m_index = str(int(m_index) - 1)
 				elif(d2 == difference) : 
-					m_index = m_index + 1
+					m_index = str(int(m_index) + 1)
 				else : continue
 
 			origin_mpath = OUTPUT_ORIGIN_SUITE_DIR + "/" + op + "/MUT" + m_index
@@ -169,21 +169,21 @@ for i, suite_index in enumerate(suitelist) :
 				diff_op.add(op)
 
 				try:
-					o1 = open('../mutant.music.origin/source/{}/space.MUT{}.c'.format(op, m_index -1 ), 'r', encoding="ISO-8859-1").read()
+					o1 = open('../mutant.music.origin/source/{}/space.MUT{}.c'.format(op, int(m_index) -1 ), 'r', encoding="ISO-8859-1").read()
 					d1 = ".".join(difflib.unified_diff(o.splitlines(True), p1.splitlines(True), lineterm = '\n'))
 				except FileNotFoundError:
 					pass
-					
+
 				try:
-					o2 = open('../mutant.music.origin/source/{}/space.MUT{}.c'.format(op, m_index +1 ), 'r', encoding="ISO-8859-1").read()
+					o2 = open('../mutant.music.origin/source/{}/space.MUT{}.c'.format(op, int(m_index) +1 ), 'r', encoding="ISO-8859-1").read()
 					d2 = ".".join(difflib.unified_diff(o.splitlines(True), p2.splitlines(True), lineterm = '\n'))
 				except FileNotFoundError:
 					pass
 
 				if(d1 == difference) :
-					m_index = m_index - 1
+					m_index = str(int(m_index) - 1)
 				elif(d2 == difference) : 
-					m_index = m_index + 1
+					m_index = str(int(m_index) + 1)
 				else : continue
 
 			# origin_mpath = OUTPUT_ORIGIN_SUITE_DIR + "/" + op + "/MUT" + util.getIndex(mutant)
