@@ -81,12 +81,17 @@ for i, suite_index in enumerate(suitelist) :
 			d = difflib.unified_diff(o.splitlines(True), p.splitlines(True), lineterm = '\n')
 			d = ".".join(d)
 
-			if (difference != d && int(m_index)>0) : 
+			if (difference != d ) : 
 				print("diff : MUT{} by {}".format(m_index, op))
 				diff_op.add(op)
-
-				p1 = open('../mutant.music.perf/source/{}/space.perf.MUT{}.c'.format(op, m_index -1 ), 'r', encoding="ISO-8859-1").read()
-				d1 = ".".join(difflib.unified_diff(o.splitlines(True), p1.splitlines(True), lineterm = '\n'))
+				d1 = ""
+				d2 = ""
+				
+				try:
+					p1 = open('../mutant.music.perf/source/{}/space.perf.MUT{}.c'.format(op, m_index -1 ), 'r', encoding="ISO-8859-1").read()
+					d1 = ".".join(difflib.unified_diff(o.splitlines(True), p1.splitlines(True), lineterm = '\n'))
+				except FileNotFoundError:
+					pass
 
 				try:
 					p2 = open('../mutant.music.perf/source/{}/space.perf.MUT{}.c'.format(op, m_index +1 ), 'r', encoding="ISO-8859-1").read()
@@ -156,14 +161,19 @@ for i, suite_index in enumerate(suitelist) :
 
 			d = difflib.unified_diff(o.splitlines(True), p.splitlines(True), lineterm = '\n')
 			d = ".".join(d)
+			d1 = ""
+			d2 = ""
 
-			if (difference != d && int(m_index)>0 ) : 
+			if (difference != d ) : 
 				print("diff : MUT{} by {}".format(m_index, op))
 				diff_op.add(op)
 
-				o1 = open('../mutant.music.origin/source/{}/space.MUT{}.c'.format(op, m_index -1 ), 'r', encoding="ISO-8859-1").read()
-				d1 = ".".join(difflib.unified_diff(o.splitlines(True), p1.splitlines(True), lineterm = '\n'))
-
+				try:
+					o1 = open('../mutant.music.origin/source/{}/space.MUT{}.c'.format(op, m_index -1 ), 'r', encoding="ISO-8859-1").read()
+					d1 = ".".join(difflib.unified_diff(o.splitlines(True), p1.splitlines(True), lineterm = '\n'))
+				except FileNotFoundError:
+					pass
+					
 				try:
 					o2 = open('../mutant.music.origin/source/{}/space.MUT{}.c'.format(op, m_index +1 ), 'r', encoding="ISO-8859-1").read()
 					d2 = ".".join(difflib.unified_diff(o.splitlines(True), p2.splitlines(True), lineterm = '\n'))
