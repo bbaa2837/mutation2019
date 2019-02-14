@@ -7,7 +7,7 @@ import csv
 import time
 import filecmp
 import difflib
-import measure
+import re
 
 def getIndex(str):
 
@@ -15,13 +15,13 @@ def getIndex(str):
 
 def make(target, suite, writer):
 
-  suitefile = open("../testplans.alt/testplan.cov" + suite, 'r')
+  suitefile = open("../testplans.alt/testplans.cov/" + suite, 'r')
 
   for test_index, line in enumerate(suitefile.readlines()) :
 
     if line.startswith("../inputs") :
 
-      cmd = "timeout 3s"
+      cmd = "timeout 3s "
       
       if(target == 'origin') :
         cmd += "{} {}\n".format("../source/space", line.strip())
@@ -37,11 +37,11 @@ if __name__ == "__main__" :
   result_file = csv.writer(open("time.csv", "w", newline = ''))
   suitelist = list(reader)[0]
 
-  for i, suite_index in enumerate(suitelist[1:2]) :
+  for i, suite_index in enumerate(suitelist) :
 
     suite = "suite" + suite_index
-    o_suite_writer = open(suite+"_bin_o.sh", "w")
-    p_suite_writer = open(suite+"_bin_p.sh", "w")
+    o_suite_writer = open("bin_time/"+suite+"_bin_o.sh", "w")
+    p_suite_writer = open("bin_time/"+suite+"_bin_p.sh", "w")
 
     make("origin", suite, o_suite_writer)
     make("perf", suite, p_suite_writer)
