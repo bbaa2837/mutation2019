@@ -5,6 +5,7 @@ from os import listdir
 from os.path import isdir, isfile, join
 import csv
 import re
+import time
 
 def getIndex(str) :
     return re.findall('\d+', str)[0]
@@ -28,16 +29,23 @@ if __name__ == '__main__':
 
     try:
         cmd = "millisecond-time sh suite55_bin_o.sh"
+        start = time.time()
         process = subprocess.Popen(cmd.split(), stdout = subprocess.PIPE, stderr = subprocess.PIPE)
         out, err = process.communicate()
         print(out)
+        
         # output = out.decode('ISO-8859-1').split('\n')
         # print(out.decode('ISO-8859-1'))
         # elapsed_time_ms = int(re.findall('\d+', output[-2])[-1])
         # print elapsed_time_ms
 
+        exec_time = time.time() - start
+        print(exec_time)
+
     except subprocess.TimeoutExpired:
         process.kill()
         pass
+
+
 
 
