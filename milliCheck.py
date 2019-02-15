@@ -13,6 +13,8 @@ def getIndex(str) :
 
 if __name__ == '__main__': 
 
+    t = time.time()
+
     SPACE_DIR = "../"
 
     reader = csv.reader(open("../testNum.csv", "r"))
@@ -26,26 +28,27 @@ if __name__ == '__main__':
     #     p_suite_writer = open(suite+"_p.sh", "w")
 
 
+    exec_time = [0,0]
+    cmd = "millisecond-time sh suite55_bin_o.sh"
+    exec_time[0] = time.time()
+    process = subprocess.Popen(cmd.split(), stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+    out, err = process.communicate()
+    print(out)
+    
+    # output = out.decode('ISO-8859-1').split('\n')
+    # print(out.decode('ISO-8859-1'))
+    # elapsed_time_ms = int(re.findall('\d+', output[-2])[-1])
+    # print elapsed_time_ms
 
-    try:
-        cmd = "millisecond-time sh suite55_bin_o.sh"
-        start = time.time()
-        process = subprocess.Popen(cmd.split(), stdout = subprocess.PIPE, stderr = subprocess.PIPE)
-        out, err = process.communicate()
-        print(out)
-        
-        # output = out.decode('ISO-8859-1').split('\n')
-        # print(out.decode('ISO-8859-1'))
-        # elapsed_time_ms = int(re.findall('\d+', output[-2])[-1])
-        # print elapsed_time_ms
+    exec_time[0] = time.time() - exec_time[0]
 
-        exec_time = time.time() - start
-        print(exec_time)
+    cmd = "millisecond-time sh suite55_bin_p.sh"
+    exec_time[1] = time.time()
+    process = subprocess.Popen(cmd.split(), stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+    out, err, = process.communicate()
+    print(out)
 
-    except subprocess.TimeoutExpired:
-        process.kill()
-        pass
+    exec_time[1] = time.time() - exec_time[1]
 
-
-
+    print(exec_time)
 
